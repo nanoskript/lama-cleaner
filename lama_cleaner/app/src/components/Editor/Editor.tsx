@@ -9,7 +9,7 @@ import {
   CursorArrowRaysIcon,
   EyeIcon,
   ArrowsPointingOutIcon,
-  ArrowDownTrayIcon,
+  ArrowUpTrayIcon,
 } from '@heroicons/react/24/outline'
 import {
   ReactZoomPanPinchRef,
@@ -1772,10 +1772,24 @@ export default function Editor() {
             disabled={renders.length === 0}
           />
           <Button
-            toolTip="Save Image"
-            icon={<ArrowDownTrayIcon />}
+            toolTip="Upload to Scanlation Station"
+            icon={<ArrowUpTrayIcon />}
             disabled={!renders.length}
-            onClick={download}
+            onClick={async () => {
+              const render = renders[renders.length - 1]
+              const image = await srcToFile(render.src, file.name, file.type)
+              const body = new FormData()
+              body.append('image', image)
+
+              const urlParams = new URLSearchParams(window.location.search)
+              const uploadUrl = urlParams.get('upload')!
+              await fetch(uploadUrl, {
+                method: 'POST',
+                credentials: 'include',
+                body,
+              })
+              window.close()
+            }}
           />
 
           {settings.runInpaintingManually && !isDiffusionModels && (

@@ -5,6 +5,7 @@ from pydantic import BaseModel
 
 
 MPS_SUPPORT_MODELS = [
+    "lama",
     "instruct_pix2pix",
     "sd1.5",
     "anything4",

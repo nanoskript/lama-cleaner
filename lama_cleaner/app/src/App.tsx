@@ -26,6 +26,18 @@ function App() {
   const userInputImage = useInputImage()
   const setServerConfigState = useSetRecoilState(serverConfigState)
 
+  // Load image from a URL on open.
+  useEffect(() => {
+    ;(async () => {
+      const urlParams = new URLSearchParams(window.location.search)
+      const imageUrl = urlParams.get('image')
+      if (imageUrl) {
+        const response = await fetch(imageUrl, { credentials: 'include' })
+        setFile(new File([await response.blob()], 'image'))
+      }
+    })()
+  }, [])
+
   // Set Input Image
   useEffect(() => {
     setFile(userInputImage)
