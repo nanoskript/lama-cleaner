@@ -21,7 +21,7 @@ import {
   mouseXY,
   srcToFile,
 } from "@/lib/utils"
-import { Eraser, Eye, Redo, Undo, Expand, Download } from "lucide-react"
+import { Eraser, Eye, Redo, Undo, Expand, Download, Upload } from "lucide-react"
 import { useImage } from "@/hooks/useImage"
 import { Slider } from "./ui/slider"
 import { PluginName } from "@/lib/types"
@@ -965,7 +965,24 @@ export default function Editor(props: EditorProps) {
           >
             <Download />
           </IconButton>
+          {new URLSearchParams(window.location.search).get('upload') && (
+            <IconButton
+              tooltip="Upload"
+              disabled={!renders.length}
+              onClick={async () => {
+                const render = renders[renders.length - 1]
+                const image = await srcToFile(render.src, file.name, file.type)
+                const body = new FormData()
+                body.append('image', image)
 
+                const uploadUrl = new URLSearchParams(window.location.search).get('upload')!
+                await fetch(uploadUrl, { method: 'POST', credentials: 'include', body })
+                window.close()
+              }}
+            >
+              <Upload />
+            </IconButton>
+          )}
           {settings.enableManualInpainting &&
           settings.model.model_type === "inpaint" ? (
             <IconButton
